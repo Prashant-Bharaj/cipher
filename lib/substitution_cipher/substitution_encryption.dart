@@ -3,9 +3,11 @@ import 'package:cipher/widgets/custom_text.dart';
 import 'package:cipher/widgets/selectable_output.dart';
 import 'package:flutter/material.dart';
 
-TextEditingController ptController = TextEditingController();
-TextEditingController encKeyController = TextEditingController();
-String? cipherText;
+TextEditingController ptController = TextEditingController(text: "abc");
+TextEditingController substitutionCipherEncryptionKeyController =
+    TextEditingController(text: "3");
+String? substitutionCipherText;
+bool isValid = true;
 
 class SubstitutionEncryption extends StatefulWidget {
   const SubstitutionEncryption({Key? key}) : super(key: key);
@@ -39,27 +41,39 @@ class _SubstitutionEncryptionState extends State<SubstitutionEncryption> {
                 text: "Enter Key",
               ),
               CustomField(
-                textEditingController: encKeyController,
+                textEditingController:
+                    substitutionCipherEncryptionKeyController,
                 textInputType: TextInputType.number,
+                autoButton: true,
               ),
               const SizedBox(height: 10.0),
               Center(
                 child: TextButton(
                   onPressed: () {
                     String pt = ptController.text;
-                    String key = encKeyController.text;
-                    String cipherChars="";
-                    int numericKey = int.parse(key);
-                      for(int i = 0 ; i< pt.length; i++){
-                        print("${(pt.codeUnits[i]-97) + numericKey}");
-                        cipherChars += String.fromCharCode((((pt.codeUnits[i]-97) + numericKey)%26)+97);
+                    String key = substitutionCipherEncryptionKeyController.text;
+                    String cipherChars = "";
+
+                    RegExp regExp = RegExp(r"^[a-z]*$");
+                    RegExp regExpKey = RegExp(r"^[0-9]*$");
+                    if (pt.isEmpty ||
+                        key.isEmpty ||
+                        !regExp.hasMatch(pt) ||
+                        !regExpKey.hasMatch(key)) {
+                      isValid = false;
+                      cipherChars = "Invalid Input";
+                    } else {
+                      isValid = true;
+                      int numericKey = int.parse(key);
+                      for (int i = 0; i < pt.length; i++) {
+                        cipherChars += String.fromCharCode(
+                            (((pt.codeUnits[i] - 97) + numericKey) % 26) + 97);
                       }
-
+                    }
                     setState(() {
-                      cipherText = cipherChars;
-                    // print(cipherText);
+                      substitutionCipherText = cipherChars;
+                      // print(cipherText);
                     });
-
                   },
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.08,
@@ -86,7 +100,8 @@ class _SubstitutionEncryptionState extends State<SubstitutionEncryption> {
                 height: 20.0,
               ),
               const CustomText(text: "Cipher Text"),
-              SelectableOutput(text: cipherText??"",),
+              SelectableOutput(
+                  text: substitutionCipherText ?? "", isValid: isValid),
             ],
           ),
         ),

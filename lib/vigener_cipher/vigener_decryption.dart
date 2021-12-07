@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 TextEditingController cTextController = TextEditingController(text: "acce");
 TextEditingController decKeyController = TextEditingController(text: "ab");
 String? originalText;
-
+bool isValid = true;
 class VigenerDecryption extends StatefulWidget {
   const VigenerDecryption({Key? key}) : super(key: key);
 
@@ -50,7 +50,7 @@ class _VigenerDecryptionState extends State<VigenerDecryption> {
                 height: 50.0,
               ),
               const CustomText(text: "Original Text"),
-              SelectableOutput(text: originalText ?? ""),
+              SelectableOutput(text: originalText ?? "", isValid: isValid,),
             ],
           ),
         ),
@@ -63,6 +63,15 @@ class _VigenerDecryptionState extends State<VigenerDecryption> {
     String decKey = decKeyController.text;
     cText = cText.toLowerCase();
     decKey = decKey.toLowerCase();
+
+    RegExp regExp = RegExp(r"^[a-z]*$");
+    if(cText.isEmpty || decKey.isEmpty || !regExp.hasMatch(cText) || !regExp.hasMatch(decKey)){
+      isValid = false;
+    }else{
+      isValid = true;
+    }
+
+
     List cChars = List.filled(0, null, growable: true);
     List keyChars = List.filled(0, null, growable: true);
     cChars.addAll(cText.split(""));
@@ -80,7 +89,7 @@ class _VigenerDecryptionState extends State<VigenerDecryption> {
           97));
     }
     setState(() {
-      originalText = String.fromCharCodes(cipherChars);
+      originalText = isValid ? String.fromCharCodes(cipherChars): "Invalid Input";
     });
   }
 

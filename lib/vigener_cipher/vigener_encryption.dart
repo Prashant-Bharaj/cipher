@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 TextEditingController ptController = TextEditingController(text: "abcd");
 TextEditingController encKeyController = TextEditingController(text: "ab");
 String? cipherText;
-
+bool isValid = true;
 class VigenerEncryption extends StatefulWidget {
   const VigenerEncryption({Key? key}) : super(key: key);
   @override
@@ -49,6 +49,12 @@ class _VigenerEncryptionState extends State<VigenerEncryption> {
                     String key = encKeyController.text;
                     pt = pt.toLowerCase();
                     key = key.toLowerCase();
+                    RegExp regExp = RegExp(r"^[a-z]*$");
+                    if(!regExp.hasMatch(pt) || !regExp.hasMatch(key)){
+                      isValid = false;
+                    }else{
+                      isValid = true;
+                    }
                     List ptChars = List.filled(0, null, growable: true);
                     List keyChars = List.filled(0, null, growable: true);
                     ptChars.addAll(pt.split(""));
@@ -69,7 +75,7 @@ class _VigenerEncryptionState extends State<VigenerEncryption> {
                     }
 
                     setState(() {
-                      cipherText = String.fromCharCodes(cipherChars);
+                      cipherText = isValid ? String.fromCharCodes(cipherChars) : "Invalid Inputs";
                       // print(cipherText);
                     });
                   },
@@ -98,7 +104,7 @@ class _VigenerEncryptionState extends State<VigenerEncryption> {
                 height: 20.0,
               ),
               const CustomText(text: "Cipher Text"),
-              SelectableOutput(text: cipherText??"",),
+              SelectableOutput(text: cipherText??"", isValid: isValid),
             ],
           ),
         ),

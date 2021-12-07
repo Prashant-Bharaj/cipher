@@ -7,7 +7,7 @@ TextEditingController ptController = TextEditingController(text: "vernam");
 TextEditingController encKeyController = TextEditingController(text: "cipher");
 String? cipherText;
 var c = ['a', 'b', 'c', 'd', 'e', 'f','g', 'h', 'i', 'j', 'k', 'l','m', 'n', 'o', 'p', 'q', 'r','s', 't', 'u', 'v', 'w', 'x','y', 'z','A', 'B', 'C', 'D', 'E', 'F'];
-
+bool isValid = true;
 class VernamEncryption extends StatefulWidget {
   const VernamEncryption({Key? key}) : super(key: key);
 
@@ -50,12 +50,18 @@ class _VernamEncryptionState extends State<VernamEncryption> {
                     String key = encKeyController.text;
                     pt = pt.toLowerCase();
                     key = key.toLowerCase();
-                    if(pt.length != key.length){
+                    RegExp regExp = RegExp(r"^[a-z]*$");
+                    if(pt.isEmpty || key.isEmpty || !regExp.hasMatch(pt) || !regExp.hasMatch(key)){
+                      isValid = false;
+                      cipherText = "Invalid Input";
+                    }else if(pt.length != key.length){
                        setState(() {
+                         isValid = false;
                          cipherText = "!!!key and plain text length doesn't match!!!";
                        });
                     }
                     else {
+                      isValid = true;
                       String cipherChars="";
                       for(int i = 0 ; i< pt.length; i++){
                         cipherChars += c[(pt.codeUnitAt(i)-97) ^ (key.codeUnitAt(i)-97)];
@@ -91,7 +97,7 @@ class _VernamEncryptionState extends State<VernamEncryption> {
                 height: 20.0,
               ),
               const CustomText(text: "Cipher Text"),
-              SelectableOutput(text: cipherText??"",),
+              SelectableOutput(text: cipherText??"", isValid: isValid,),
             ],
           ),
         ),

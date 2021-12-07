@@ -65,7 +65,7 @@ class _VernamDecryptionAutoState extends State<VernamDecryptionAuto> {
     decKeys.addAll(decKey.split(" "));
     String cipherChars="";
     for(int i = 0 ; i< cText.length; i++){
-      print("${cText.codeUnits[i] ^ int.parse(decKeys[i])}");
+      // print("${cText.codeUnits[i] ^ int.parse(decKeys[i])}");
       cipherChars += String.fromCharCode(cText.codeUnits[i] ^ int.parse(decKeys[i]));
     }
     setState(() {

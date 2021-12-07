@@ -3,10 +3,10 @@ import 'package:cipher/widgets/custom_text.dart';
 import 'package:cipher/widgets/selectable_output.dart';
 import 'package:flutter/material.dart';
 
-TextEditingController cTextController = TextEditingController();
-TextEditingController decKeyController = TextEditingController();
+TextEditingController cTextController = TextEditingController(text: "def");
+TextEditingController decKeyController = TextEditingController(text: "3");
 String? originalText;
-
+bool isValid = true;
 class SubstitutionDecryption extends StatefulWidget {
   const SubstitutionDecryption({Key? key}) : super(key: key);
 
@@ -50,7 +50,7 @@ class _SubstitutionDecryptionState extends State<SubstitutionDecryption> {
                 height: 50.0,
               ),
               const CustomText(text: "Original Text"),
-              SelectableOutput(text: originalText ?? ""),
+              SelectableOutput(text: originalText ?? "", isValid: isValid,),
             ],
           ),
         ),
@@ -61,10 +61,20 @@ class _SubstitutionDecryptionState extends State<SubstitutionDecryption> {
   void decrypt() {
     String cText = cTextController.text;
     String decKey = decKeyController.text;
-    int numericKey = int.parse(decKey);
+
     String cipherChars="";
-    for(int i = 0 ; i< cText.length; i++){
-      cipherChars += String.fromCharCode((((cText.codeUnits[i]-97) - numericKey)%26)+97);
+    RegExp regExp = RegExp(r"^[a-z]*$");
+    RegExp regExpKey = RegExp(r"^[0-9]*$");
+    if(cText.isEmpty || decKey.isEmpty || !regExp.hasMatch(cText) || !regExpKey.hasMatch(decKey)){
+      isValid = false;
+      cipherChars = "Invalid Input";
+    }else{
+      isValid = true;
+      int numericKey = int.parse(decKey);
+
+      for(int i = 0 ; i< cText.length; i++){
+        cipherChars += String.fromCharCode((((cText.codeUnits[i]-97) - numericKey)%26)+97);
+      }
     }
     setState(() {
       originalText = cipherChars;

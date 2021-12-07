@@ -10,7 +10,7 @@ TextEditingController ptController = TextEditingController(text: "abc");
 String? cipherText;
 String? encryptionKey;
 Random random = Random();
-
+bool isValid = true;
 class VernamEncryptionAuto extends StatefulWidget {
   const VernamEncryptionAuto({Key? key}) : super(key: key);
 
@@ -50,12 +50,20 @@ class _VernamEncryptionAutoState extends State<VernamEncryptionAuto> {
                     for(var i in keys){
                       key +="$i ";
                     }
-                    for (int i = 0; i < pt.length; i++) {
-                      print(
-                          "${((pt.codeUnits[i]) ^ keys[i])}");
-                      cipherChars += String.fromCharCode(
-                          ((pt.codeUnits[i]) ^ keys[i]));
+                    RegExp regExp = RegExp(r"^[a-z]*$");
+                    if(pt.isEmpty || !regExp.hasMatch(pt) ){
+                      isValid = false;
+                      cipherChars = "Invalid Input";
+                    }else{
+                      isValid = true;
+                      for (int i = 0; i < pt.length; i++) {
+                        print(
+                            "${((pt.codeUnits[i]) ^ keys[i])}");
+                        cipherChars += String.fromCharCode(
+                            ((pt.codeUnits[i]) ^ keys[i]));
+                      }
                     }
+
 
                     setState(() {
                       cipherText = cipherChars;
@@ -90,11 +98,12 @@ class _VernamEncryptionAutoState extends State<VernamEncryptionAuto> {
               const CustomText(text: "Cipher Text"),
               SelectableOutput(
                 text: cipherText ?? "",
+                isValid: isValid,
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
               const CustomText(text: "Encryption Key"),
               SelectableOutput(
-                text: encryptionKey ?? "",
+                text: isValid ? encryptionKey ?? "" : "",
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
             ],

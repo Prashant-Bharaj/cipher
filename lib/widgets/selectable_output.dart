@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class SelectableOutput extends StatelessWidget {
   final double? height;
   final String text;
+  final bool? isValid;
   const SelectableOutput({
-    Key? key, required this.text, this.height,
+    Key? key, required this.text, this.height, this.isValid=true,
   }) : super(key: key);
 
   @override
@@ -22,7 +23,7 @@ class SelectableOutput extends StatelessWidget {
             child: SelectableText(
               text,
               style:
-              const TextStyle(fontSize: 30.0, color: Colors.blue),
+              TextStyle(fontSize: 30.0, color: isValid == true? Colors.blue : Colors.red),
             ),
           ),
         ),

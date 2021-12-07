@@ -8,7 +8,7 @@ TextEditingController ptController = TextEditingController(text: "prashant");
 String? cipherText;
 double currentSliderValueA = 3;
 double currentSliderValueB = 10;
-
+bool isValid = true;
 class AffineEncryption extends StatefulWidget {
   const AffineEncryption({Key? key}) : super(key: key);
 
@@ -118,11 +118,19 @@ class _AffineEncryptionState extends State<AffineEncryption> {
 
                     String cipherChars = "";
 
-                    for (int i = 0; i < pt.length; i++) {
-                      cipherChars += String.fromCharCode(
-                          (((pt.codeUnits[i] - 97)*currentSliderValueA.toInt() + currentSliderValueB.toInt()) %26
-                              )+97);
+                    RegExp regExp = RegExp(r"^[a-z]*$");
+                    if(!regExp.hasMatch(pt)){
+                      isValid = false;
+                      cipherChars = "Invalid Input";
+                    }else{
+                      isValid = true;
+                      for (int i = 0; i < pt.length; i++) {
+                        cipherChars += String.fromCharCode(
+                            (((pt.codeUnits[i] - 97)*currentSliderValueA.toInt() + currentSliderValueB.toInt()) %26
+                            )+97);
+                      }
                     }
+
                     setState(() {
                       cipherText = cipherChars;
                       // print(cipherText);
@@ -155,6 +163,7 @@ class _AffineEncryptionState extends State<AffineEncryption> {
               const CustomText(text: "Cipher Text"),
               SelectableOutput(
                 text: cipherText ?? "",
+                isValid: isValid,
               ),
             ],
           ),

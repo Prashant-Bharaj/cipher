@@ -7,7 +7,7 @@ TextEditingController cTextController = TextEditingController(text: "djkmfkxp");
 String? originalText;
 double currentSliderValueA = 3;
 double currentSliderValueB = 10;
-
+bool? isValid=true;
 class AffineDecryption extends StatefulWidget {
   const AffineDecryption({Key? key}) : super(key: key);
 
@@ -113,7 +113,7 @@ class _AffineDecryptionState extends State<AffineDecryption> {
                 height: 50.0,
               ),
               const CustomText(text: "Original Text"),
-              SelectableOutput(text: originalText ?? ""),
+              SelectableOutput(text: originalText ?? "", isValid: isValid),
             ],
           ),
         ),
@@ -132,9 +132,16 @@ class _AffineDecryptionState extends State<AffineDecryption> {
   void decrypt() {
     String cText = cTextController.text;
     String cipherChars="";
-    for(int i = 0 ; i< cText.length; i++){
-      cipherChars += String.fromCharCode((((modeInverse(currentSliderValueA.toInt(),26) * (cText.codeUnits[i]-97- currentSliderValueB).toInt())%26)+97));
+    RegExp regExp = RegExp(r"^[a-z]*$");
+    if(!regExp.hasMatch(cText)){
+      isValid = false;
+      cipherChars = "Invalid Input";
+    }else{
+      for(int i = 0 ; i< cText.length; i++){
+        cipherChars += String.fromCharCode((((modeInverse(currentSliderValueA.toInt(),26) * (cText.codeUnits[i]-97- currentSliderValueB).toInt())%26)+97));
+      }
     }
+
     setState(() {
       originalText = cipherChars;
     });

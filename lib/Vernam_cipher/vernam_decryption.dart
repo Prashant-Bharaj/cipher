@@ -51,7 +51,7 @@ class _VernamDecryptionState extends State<VernamDecryption> {
                 height: 50.0,
               ),
               const CustomText(text: "Original Text"),
-              SelectableOutput(text: originalText ?? ""),
+              SelectableOutput(text: originalText ?? "", isValid: isValid),
             ],
           ),
         ),
@@ -63,17 +63,22 @@ class _VernamDecryptionState extends State<VernamDecryption> {
     String cText = cTextController.text;
     String decKey = decKeyController.text;
     String cipherChars="";
-    if(cText.length == decKey.length){
+    RegExp regExp = RegExp(r"^[A-Fa-z]*$");
+    if(cText.isEmpty || decKey.isEmpty || !regExp.hasMatch(cText) || !regExp.hasMatch(decKey)){
+      isValid = false;
+      cipherChars = "Invalid Input";
+    }else if(cText.length == decKey.length){
+      isValid = true;
     for(int i = 0 ; i< cText.length; i++){
-      print(cText.codeUnitAt(i));
       if(cText.codeUnitAt(i)-97 >= 0) {
-        print("1st ${(cText.codeUnits[i]-97)} ^ ${(decKey.codeUnitAt(i)-97)} = ${(cText.codeUnits[i]-97) ^ (decKey.codeUnitAt(i)-97)}");
+        // print("1st ${(cText.codeUnits[i]-97)} ^ ${(decKey.codeUnitAt(i)-97)} = ${(cText.codeUnits[i]-97) ^ (decKey.codeUnitAt(i)-97)}");
         cipherChars += c[(cText.codeUnits[i]-97) ^ (decKey.codeUnitAt(i)-97)];
       }else{
-        print("2nd ${(cText.codeUnitAt(i)-65+26)} ^ ${(decKey.codeUnitAt(i)-97)} = ${(cText.codeUnitAt(i)-65+26) ^ (decKey.codeUnitAt(i)-97)}" );
+        // print("2nd ${(cText.codeUnitAt(i)-65+26)} ^ ${(decKey.codeUnitAt(i)-97)} = ${(cText.codeUnitAt(i)-65+26) ^ (decKey.codeUnitAt(i)-97)}" );
         cipherChars +=c[(cText.codeUnitAt(i)-65+26) ^ (decKey.codeUnitAt(i)-97)];
       }
     }}else{
+      isValid = false;
       cipherChars = "Plain Text and Key length doesn't match";
     }
     setState(() {
